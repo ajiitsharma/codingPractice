@@ -10,7 +10,6 @@ stoiMap = {}
 
 def computeStringSum(n):
     string = str(n)
-    print(f"String representation of {n}: {string}")
     intVal = 0
     for s in string:
         intVal += stoiMap[s]
