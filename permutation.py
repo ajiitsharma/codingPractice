@@ -40,3 +40,4 @@ if __name__ == "__main__":
     for n, m in test_cases:
         result = count_combinations(n + m - 1, n)
         print(f"Number of unique permutations starting with 1 for {n} 0's and {m} 1's: {result}")
+    
