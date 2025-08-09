@@ -5,7 +5,7 @@ from utils import TestRunner
 # Constants
 MOD = 10**9 + 7
 
-def count_combinations(n: int, r: int) -> int:
+def nCr_mod_fast(n: int, r: int) -> int:
     # C(n,r) = C(n-1,r-1) + C(n-1,r) --> This is O(n*r) time complexity
     # Better C(n,r) = C(n, r-1) * (n - r + 1) // r --> This is O(r) time complexity
     if r == 0:
@@ -15,13 +15,13 @@ def count_combinations(n: int, r: int) -> int:
         
     result = 1
     for i in range(1, r+1):
-        result = (((result * (n - i + 1)))// i)
+        result = result % MOD * (n-i+1) %MOD *(pow(i, MOD - 2, MOD)) % MOD
         
     return result % MOD
       
 
 def solve(n, m):
-    return count_combinations(m+n-2, m-1)
+    return nCr_mod_fast(m+n-2, m-1)
 
 
 
