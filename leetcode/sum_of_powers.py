@@ -1,5 +1,7 @@
 class Solution:
     
+    _MOD = 10**9 + 7
+    
     def maxRange(self, n: int, x: int) -> int:
         """
         This function calculates the maximum base `i` such that `i^x <= n`.
@@ -54,14 +56,49 @@ class Solution:
             if count_remaining != 0:
                 count += count_remaining
         
-        return count
+        return count%self._MOD
+    
+    def numberofWaysDP(self, n: int, x: int) -> int:
+        """
+        This function calculates the number of ways to express `n` as a sum of powers of integers raised to `x`.
+        It uses dynamic programming to build up the solution.
+        """
+
+        maxRange = Solution.maxRange(self, n, x)
+        if maxRange == 0:
+            return 0
+        if n < 0 or x <= 0:
+            return 0
+        
+        # Create a DP array to store the number of ways to express each number
+        # dp[i][j] will store the number of ways to express `i` using bases up to `j`
+        
+        dp = [[0] * (maxRange+1) for _ in range(n + 1)]
+        # Base case:
+        for j in range(maxRange + 1):
+            dp[0][j] = 1
+        
+        # Fill the DP table
+        for i in range(1, n + 1):
+            for j in range(1, maxRange+1):
+                base_power = j ** x
+                if base_power > i:
+                    dp[i][j] = dp[i][j - 1]  # Cannot use this base, carry forward the previous count
+                else:
+                    dp[i][j] = dp[i][j - 1] + dp[i - base_power][j - 1]  # Include or exclude the current base
+        
+        print(f"DP Table for n={n}, x={x}:")
+        for i, row in enumerate(dp):
+            print(f"{i}: {row}")
+
+        return dp[n][maxRange]%self._MOD
 
 def main():
     """
     Main function to test the numberOfWays function with sample input.
     """
     # Example usage
-    n = [4, 10, 27, 100, 1000, 1000]
+    n = [4, 10, 27]
     x = 3  # Power to which the base is raised
     print(f"Calculating number of ways to express {n} as a sum of powers of {x}:")
     
@@ -73,6 +110,26 @@ def main():
             print(f"Number of ways to express {num} as a sum of powers of {x}: {result}")
     else:
         pass
-            
+
+def test():
+        """
+        Test function to validate the numberOfWays and numberofWaysDP functions.
+        """
+        # Testing the DP function
+        dp_test_cases = [
+                (4, 1, 2),
+                (4, 3, 0),
+                (5, 2, 1),
+                (10, 3, 0),
+                (10, 2, 1),
+        ]
+        
+        solution = Solution()
+        for n, x, expected in dp_test_cases:
+            result_dp = solution.numberofWaysDP(n, x)
+            assert result_dp == expected, f"DP Test failed for n={n}, x={x}. Expected {expected}, got {result_dp}"
+            print(f"DP Test passed for n={n}, x={x}. Result: {result_dp}")      
+
+
 if __name__ == '__main__':
-    main()
+    test()
