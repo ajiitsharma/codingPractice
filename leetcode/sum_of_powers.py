@@ -93,7 +93,7 @@ class Solution:
 
         return dp[n][maxRange]%self._MOD
 
-def main():
+def test_recursion():
     """
     Main function to test the numberOfWays function with sample input.
     """
@@ -111,7 +111,7 @@ def main():
     else:
         pass
 
-def test():
+def testDP():
         """
         Test function to validate the numberOfWays and numberofWaysDP functions.
         """
@@ -132,4 +132,5 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    test_recursion()
+    testDP()
