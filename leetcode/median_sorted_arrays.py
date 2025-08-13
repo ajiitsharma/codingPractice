@@ -11,19 +11,35 @@ class Solution:
 
         expected_median_index = (m +n + 1) // 2
         sorted_array = []
-
         i, j = 0, 0
-        while i + j < expected_median_index:
-            if i < m and (j >= n or nums1[i] < nums2[j]):
+
+        # Merge the two sorted arrays until we reach the expected median index
+        # This is a modified merge step of the merge sort algorithm
+        while i < m and j < n:
+            if nums1[i] < nums2[j]:
                 sorted_array.append(nums1[i])
                 i += 1
             else:
                 sorted_array.append(nums2[j])
                 j += 1
 
-        print(f"Sorted array up to median index: {sorted_array}")
-        print(f"Final indices: i={i}, j={j}")
-        return 0.0
+        while i < m:
+            sorted_array.append(nums1[i])
+            i += 1
+
+        while j < n:
+            sorted_array.append(nums2[j])
+            j += 1
+
+        total_length = m + n
+        if total_length % 2 == 0:
+            return (sorted_array[expected_median_index - 1] + sorted_array[expected_median_index]) / 2.0
+        else:
+            return sorted_array[expected_median_index - 1]
+        
+        # If no elements, return 0.0
+        if not sorted_array:
+                return 0.0
     
 
 if __name__ == '__main__':
