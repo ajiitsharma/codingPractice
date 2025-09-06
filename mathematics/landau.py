@@ -65,37 +65,44 @@ def compute_landau(N: int) -> list[int]:
         return landau
 
 
-def compute_landau_dp(N: int) -> list[int]:
+def create_partitions_brute(N: int) -> list[list[int]]:
+        print(f'Computing partition for N = {N}')
 
-        dp = [[0] * (N+1) for _ in range(N+1)]
+        if N == 1:
+                return [[1]]
         
-        for j in range(1, N+1):
-                dp[j][1] = 1
-                dp[j][j] = j
+        partitions = []
+        for j in range(N-1, 0, -1):
+                prev_partition = create_partitions_brute(j)
+                for row in prev_partition:
+                        row.append(N-j)
+                        partitions.append(row)
 
-        for i in range(2, N + 1):
-                for j in range(2, i):
-                        dp[i][j] = lcm_AB(dp[j][j], dp[i-j][min(j, i-j)])
-
-        landau = [max(row) for row in dp]
-
-        return landau
-
-def compute_landau_2d(N: int) -> list[int]:
-    
-        dp = [[0] * (N+1) for _ in range(N+1)]
-
-        for m in range(N+1):
-                dp[0][m] = 1  # base case: LCM of empty partition is 1
+        partitions.append([N])
+        return partitions
         
-        for n in range(1, N+1):
-                for m in range(1, N+1):
-                        dp[n][m] = dp[n][m-1]  # exclude m
-                        if n >= m:
-                                dp[n][m] = max(dp[n][m], lcm_AB(m, dp[n-m][m]))
+def create_partitions_brute_memo(N: int, memo: dict[int, list[int]] = None) -> list[list[int]]:
+
+        if memo is None:
+                memo = {}
+
+        if N == 1:
+                memo[1] = [[1]]
+                return memo[1]
         
-        landau = [max(row) for row in dp]
-        return landau
+        if N in memo:
+                return memo[N]
+        
+        partitions = []
+        for j in range(N-1, 0, -1):
+                prev_partition = create_partitions_brute_memo(j, memo)
+                for row in prev_partition:
+                        partitions.append(row + [N-j])
+
+        partitions.append([N])
+        memo[N] = partitions
+        
+        return memo[N]
 
 
 def compute_landau_dp_1D(N: int) -> list[int]:
@@ -111,9 +118,18 @@ def compute_landau_dp_1D(N: int) -> list[int]:
 
 
 if __name__ == '__main__':
-        print(f'Program to compute Landau function g(N)')
-        max_range = int(input('Enter N: ').strip())
+        # print(f'Program to compute Landau function g(N)')
+        # max_range = int(input('Enter N: ').strip())
 
-        landau = compute_landau_dp_1D(max_range)
-        for i, val in enumerate(landau):
-                print(f'g({i}) = {val}')
+        # landau = compute_landau_dp_1D(max_range)
+        # for i, val in enumerate(landau):
+        #         print(f'g({i}) = {val}')
+
+        print(f'Program to create partition of N')
+        max_range = int(input('Enter N: ').strip())
+        partitions  = create_partitions_brute_memo(max_range)
+        for row in partitions:
+                print(row)
+
+
+        
