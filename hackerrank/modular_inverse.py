@@ -36,7 +36,7 @@ def fast_exponent(x: int, n: int, mod:int) -> int:
                 result = (result * base) % mod
 
             base = (base ** 2) % mod
-            m //=2
+            m //= 2
         
         return result
 

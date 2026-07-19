@@ -81,8 +81,7 @@ def create_partitions_brute(N: int) -> list[list[int]]:
         partitions.append([N])
         return partitions
         
-def create_partitions_brute_memo(N: int, memo: dict[int, list[int]] = None) -> list[list[int]]:
-
+def create_partitions_memo(N: int, memo: dict[int, list[int]] = None) -> list[list[int]]:
         if memo is None:
                 memo = {}
 
@@ -95,13 +94,14 @@ def create_partitions_brute_memo(N: int, memo: dict[int, list[int]] = None) -> l
         
         partitions = []
         for j in range(N-1, 0, -1):
-                prev_partition = create_partitions_brute_memo(j, memo)
+                prev_partition = create_partitions_memo(j, memo)
                 for row in prev_partition:
-                        partitions.append(row + [N-j])
+                        if N-j >= max(row):
+                                partitions.append(row + [N-j])
 
         partitions.append([N])
         memo[N] = partitions
-        
+
         return memo[N]
 
 
@@ -127,9 +127,10 @@ if __name__ == '__main__':
 
         print(f'Program to create partition of N')
         max_range = int(input('Enter N: ').strip())
-        partitions  = create_partitions_brute_memo(max_range)
-        for row in partitions:
-                print(row)
+
+        partition2  = create_partitions_memo(max_range)
+        for i, row in enumerate(partition2):
+                print(f'{i}->{row}')
 
 
         
