@@ -17,7 +17,7 @@
 
 import math
 
-def get_rectangle_sides(S: int) -> list[tuple[int]]:
+def get_rectangle_sides(S: int) -> list[tuple[int, int]]:
         # find the list of set (a, b) such that a * B = S
         valid_sides = []
         sq_x = math.ceil(math.sqrt(S))
@@ -47,22 +47,52 @@ def binary_search_index(side_pairs: list[tuple[int]], target: int) -> int:
                         left = mid + 1
 
         return first_valid_index
-        
 
-def find_common_area(S: int, cases: list[list[int]]) -> list[int]:
+def find_common_area_step_method(S: int, cases: list[list[int]]) -> list[int]:
 
         valid_sides = get_rectangle_sides(S)
-        slides_count = len(valid_sides)
+        max_x = valid_sides[-1][0]
+
+        intersect_area = []
+
+        for test_rect in cases:
+                test_X, test_Y = test_rect
+                total_area = 0
+                curr_X = 1
+
+                for a_i, b_i in valid_sides:
+                        if curr_X > test_X:
+                                break
+
+                        right_X = min(a_i, test_X)
+
+                        if curr_X <= right_X:
+                                width = right_X - curr_X + 1
+                                height = min(b_i, test_Y)
+                                total_area += width * height
+                                curr_X = right_X + 1
+
+
+                intersect_area.append(total_area)
+
+        return intersect_area
+
+def find_common_area_binary_search(S: int, cases: list[list[int]]) -> list[int]:
+
+        valid_sides = get_rectangle_sides(S)
+        max_x = valid_sides[-1][0]
 
         intersect_area = []
 
         for test_rect in cases:
                 test_rect_X, test_rect_Y = test_rect
-
+                total_area = 0
                 # fill the height array
                 height_for_x = [0] * (test_rect_X + 1)
 
-                for j in range(test_rect_X + 1):
+                limit_x = min(test_rect_X, max_x)
+
+                for j in range(limit_x + 1):
                         if j == 0:
                                 continue
 
@@ -72,9 +102,14 @@ def find_common_area(S: int, cases: list[list[int]]) -> list[int]:
                         # binary search
                         index_j = binary_search_index(valid_sides, j)
 
-                        height_for_x[j] = min(test_rect_Y, valid_sides[index_j][1])
+                        if index_j == -1:
+                                height = 0
+                        else:
+                                height = valid_sides[index_j][1]
 
-                intersect_area.append(sum(height_for_x))
+                        total_area += min(test_rect_Y, height)
+
+                intersect_area.append(total_area)
 
         return intersect_area
 
@@ -87,7 +122,7 @@ if __name__ == '__main__':
                 for j in range(T):
                         x, y = list(map(int, input().strip().split()))
                         cases.append([x,y])
-                result = find_common_area(S, cases)
+                result = find_common_area_step_method(S, cases)
 
                 for res in result:
                         print(res)
